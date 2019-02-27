@@ -1,0 +1,31 @@
+# Schema for the configuration files of the skilld_lang_dropdown module.
+
+block.settings.lang_drop_down_switcher:*:
+  type: block_settings
+  label: 'Language DropDown Switcher'
+  mapping:
+    widget:
+      type: integer
+      label: 'Output type'
+    hidden_languages:
+      type: sequence
+      label: 'Hidden languages'
+      sequence:
+        type: string
+    display:
+      type: integer
+      label: 'Display format'
+    lang_names:
+      type: sequence
+      label: 'Custom language names'
+      sequence:
+#        we need labels.
+        type: string
+    lang_icons:
+      type: sequence
+      label: 'Custom language icons'
+      sequence:
+        type: string
+    lang_icons_position:
+      type: integer
+      label: 'Icon position'

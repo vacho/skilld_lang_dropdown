@@ -1,0 +1,11 @@
+{
+    "name": "skilld/skilld_lang_dropdown",
+    "description": "This module adds language switcher with additional options.",
+    "type": "drupal-module",
+    "keywords": ["Drupal", "Backlink"],
+    "license": "MIT",
+    "require": {
+      "php": "^7.1" 
+    }
+  }
+  

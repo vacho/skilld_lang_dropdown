@@ -1,0 +1,7 @@
+skilld-lang-dropdown-form:
+  version: 1.x
+  js:
+    js/lang_dropdown.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal

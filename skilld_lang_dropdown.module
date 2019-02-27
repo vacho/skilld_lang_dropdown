@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for Language dropdown module.
+ */
+
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_language_switch_links_alter().
+ */
+function skilld_lang_dropdown_language_switch_links_alter(
+  array &$links,
+  $type,
+  Url $url
+) {
+  $is_error_page = \Drupal::request()->attributes->has('exception');
+  $current_langcode = \Drupal::languageManager()
+    ->getCurrentLanguage()
+    ->getId();
+  foreach ($links as $langcode => &$link) {
+    if ($is_error_page) {
+      $link['url'] = Url::fromRoute('<front>');
+      $link['query'] = [];
+    }
+    if ($current_langcode === $langcode) {
+      unset($link['url']);
+      $link['attributes']['class'][] = 'is-active';
+    }
+  }
+}
