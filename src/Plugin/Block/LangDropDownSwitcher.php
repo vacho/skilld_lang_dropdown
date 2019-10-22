@@ -400,6 +400,8 @@ class LangDropDownSwitcher extends BlockBase implements ContainerFactoryPluginIn
           $output = [
             '#theme' => 'links__language_block',
             '#links' => $links->links,
+            '#prefix' => '<div class="dropdown">',
+            '#sufix' => '</div>',
             '#attributes' => [
               'class' => [
                 "language-switcher-{$links->method_id}",
