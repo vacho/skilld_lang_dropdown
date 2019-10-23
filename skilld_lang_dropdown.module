@@ -29,4 +29,22 @@ function skilld_lang_dropdown_language_switch_links_alter(
       $link['attributes']['class'][] = 'is-active';
     }
   }
+
+}
+
+/**
+ * Implements hook_theme().
+ */
+function skilld_lang_dropdown_theme($existing, $type, $theme, $path) {
+  return [
+    'dropdown_button' => [
+      'template' => 'dropdown-button',
+      'variables' => [
+        'attributes' => [],
+        'links' => [],
+        'button_icon' => '',
+        'button_text' => '',
+      ],
+    ],
+  ];
 }
