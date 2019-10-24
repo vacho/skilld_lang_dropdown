@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface;
  *   id = "lang_drop_down_switcher",
  *   admin_label = @Translation("Language DropDown Switcher"),
  *   category = @Translation("Skilld custom blocks"),
- *   deriver = "Drupal\lang_dropdown\Plugin\Derivative\LanguageDropdownBlock"
+ *   deriver = "Drupal\language\Plugin\Derivative\LanguageBlock"
  * )
  */
 class LangDropDownSwitcher extends BlockBase implements ContainerFactoryPluginInterface {
@@ -35,6 +35,8 @@ class LangDropDownSwitcher extends BlockBase implements ContainerFactoryPluginIn
   const LANGDROPDOWN_SIMPLE_SELECT = 0;
 
   const LANGDROPDOWN_LIST_LINK = 1;
+
+  const LANGDROPDOWN_DROPDOWN = 2;
 
   /**
    * The language manager.
@@ -183,6 +185,7 @@ class LangDropDownSwitcher extends BlockBase implements ContainerFactoryPluginIn
       '#options' => [
         self::LANGDROPDOWN_LIST_LINK => $this->t('Simple List'),
         self::LANGDROPDOWN_SIMPLE_SELECT => $this->t('Simple HTML select'),
+        self::LANGDROPDOWN_DROPDOWN => $this->t('Button with dropdown'),
       ],
       '#default_value' => $this->configuration['widget'],
     ];
@@ -199,7 +202,6 @@ class LangDropDownSwitcher extends BlockBase implements ContainerFactoryPluginIn
       ],
       '#default_value' => $this->configuration['display'],
     ];
-
     $form['lang_names'] = [
       '#type' => 'details',
       '#open' => TRUE,
@@ -400,8 +402,6 @@ class LangDropDownSwitcher extends BlockBase implements ContainerFactoryPluginIn
           $output = [
             '#theme' => 'links__language_block',
             '#links' => $links->links,
-            '#prefix' => '<div class="dropdown">',
-            '#sufix' => '</div>',
             '#attributes' => [
               'class' => [
                 "language-switcher-{$links->method_id}",
@@ -422,6 +422,32 @@ class LangDropDownSwitcher extends BlockBase implements ContainerFactoryPluginIn
 
           $output = [
             'lang_dropdown_form' => $form,
+            '#cache' => [
+              'contexts' => [
+                'user.permissions',
+                'url.path',
+                'url.query_args',
+              ],
+            ],
+          ];
+          break;
+
+        case self::LANGDROPDOWN_DROPDOWN:
+          $current_langcode = $this->languageManager->getCurrentLanguage()->getId();
+
+          $output = [
+            '#theme' => 'dropdown_button',
+            '#links' => $links->links,
+            '#button_text' => $this->configuration["lang_names"][$current_langcode],
+            '#button_icon' => $this->buildIcons(
+              $this->configuration['lang_icons'][$current_langcode],
+              $this->configuration["lang_names"][$current_langcode]
+            ),
+            '#attributes' => [
+              'class' => [
+                "language-switcher-{$links->method_id}",
+              ],
+            ],
             '#cache' => [
               'contexts' => [
                 'user.permissions',
