@@ -417,7 +417,7 @@ class LangDropDownSwitcher extends BlockBase implements ContainerFactoryPluginIn
           ];
           break;
 
-        case LANGDROPDOWN_SIMPLE_SELECT:
+        case self::LANGDROPDOWN_SIMPLE_SELECT:
           $form = $this->formBuilder->getForm(LanguageDropdownForm::class, $links->links, $this->configuration);
 
           $output = [
@@ -448,6 +448,7 @@ class LangDropDownSwitcher extends BlockBase implements ContainerFactoryPluginIn
                 "language-switcher-{$links->method_id}",
               ],
             ],
+            '#set_active_class' => TRUE,
             '#cache' => [
               'contexts' => [
                 'user.permissions',
