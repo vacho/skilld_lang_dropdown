@@ -6,6 +6,8 @@
  */
 
 use Drupal\Core\Url;
+use Drupal\Core\Template\Attribute;
+use Drupal\Component\Serialization\Json;
 
 /**
  * Implements hook_language_switch_links_alter().
@@ -41,10 +43,97 @@ function skilld_lang_dropdown_theme($existing, $type, $theme, $path) {
       'template' => 'dropdown-button',
       'variables' => [
         'attributes' => [],
+        'set_active_class' => FALSE,
         'links' => [],
         'button_icon' => '',
         'button_text' => '',
       ],
     ],
   ];
+}
+
+function template_preprocess_dropdown_button(&$variables) {
+  $links = $variables['links'];
+  if (!empty($links)) {
+    $variables['links'] = [];
+    foreach ($links as $key => $link) {
+      $item = [];
+      $link += [
+        'ajax' => NULL,
+        'url' => NULL,
+      ];
+
+      $li_attributes = new Attribute($link['attributes']);
+      $keys = ['title', 'url'];
+
+      $link_element = [
+        '#type' => 'link',
+        '#title' => $link['title'],
+        '#options' => array_diff_key($link, array_combine($keys, $keys)),
+        '#url' => $link['url'],
+        '#ajax' => $link['ajax'],
+      ];
+
+      // Handle links and ensure that the active class is added on the LIs, but
+      // only if the 'set_active_class' option is not empty. Links templates
+      // duplicate the "is-active" class handling of l() and
+      // LinkGenerator::generate() because they need to be able to set the
+      // "is-active" class not on the links themselves (<a> tags), but on the
+      // list items (<li> tags) that contain the links. This is necessary for
+      // CSS to be able to style list items differently when the link is active,
+      // since CSS does not yet allow one to style list items only if they
+      // contain a certain element with a certain class. That is, we cannot yet
+      // convert this jQuery selector to a CSS selector:
+      // jQuery('li:has("a.is-active")')
+      if (isset($link['url'])) {
+        if (!empty($variables['set_active_class'])) {
+
+          // Also enable set_active_class for the contained link.
+          $link_element['#options']['set_active_class'] = TRUE;
+
+          if (!empty($link['language'])) {
+            $li_attributes['hreflang'] = $link['language']->getId();
+          }
+
+          // Add a "data-drupal-link-query" attribute to let the
+          // drupal.active-link library know the query in a standardized manner.
+          // Only add the data- attribute. The "is-active" class will be
+          // calculated using JavaScript, to prevent breaking the render cache.
+          if (!empty($link['query'])) {
+            $query = $link['query'];
+            ksort($query);
+            $li_attributes['data-drupal-link-query'] = Json::encode($query);
+          }
+
+          /** @var \Drupal\Core\Url $url */
+          $url = $link['url'];
+          if ($url->isRouted()) {
+            // Add a "data-drupal-link-system-path" attribute to let the
+            // drupal.active-link library know the path in a standardized
+            // manner. Only add the data- attribute. The "is-active" class will
+            // be calculated using JavaScript, to prevent breaking the render
+            // cache.
+            $system_path = $url->getInternalPath();
+            // @todo System path is deprecated - use the route name and parameters.
+            // Special case for the front page.
+            $li_attributes['data-drupal-link-system-path'] = $system_path == '' ? '<front>' : $system_path;
+          }
+        }
+
+        $item['link'] = $link_element;
+      }
+
+      // Handle title-only text items.
+      $item['text'] = $link['title'];
+      if (isset($link['attributes'])) {
+        $item['text_attributes'] = new Attribute($link['attributes']);
+      }
+
+      // Handle list item attributes.
+      $item['attributes'] = new Attribute($li_attributes);
+
+      // Add the item to the list of links.
+      $variables['links'][$key] = $item;
+    }
+  }
 }

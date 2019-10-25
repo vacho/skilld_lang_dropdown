@@ -7,21 +7,19 @@
 
 <div class="block">
   <button class="active" aria-expanded="false">{{ button_icon }}{{ button_text }}</button>
-  <div class="dropdown">
-    <ul>
-      {% for key, item in links %}
-        {% if item.url|render|trim is not empty %}
-          <li class="{{ item.attributes.class|join(' ') }}">
-            <a href="{{ item.link }}">
-              {{ item.title.icon }}{{ item.title.title }}
-            </a>
+    <div class="dropdown">
+      <ul{{ attributes }}>
+        {%- for item in links -%}
+          <li{{ item.attributes }}>
+          {%- if item.link -%}
+            {{ item.link }}
+          {%- elseif item.text_attributes -%}
+            <span{{ item.text_attributes }}>{{ item.text }}</span>
+          {%- else -%}
+            {{ item.text }}
+          {%- endif -%}
           </li>
-        {% else %}
-          <li class="{{ item.attributes.class|join(' ') }}">
-            {{ item.title.icon }}{{ item.title.title }}
-          </li>
-        {% endif %}
-      {% endfor %}
-    </ul>
+        {%- endfor -%}
+      </ul>
   </div>
 </div>
