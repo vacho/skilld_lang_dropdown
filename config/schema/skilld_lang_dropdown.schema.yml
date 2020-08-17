@@ -11,7 +11,11 @@ block.settings.lang_drop_down_switcher:*:
       type: sequence
       label: 'Hidden languages'
       sequence:
-        type: string
+        type: sequence
+        label: 'Role'
+        sequence:
+          type: string
+          label: 'Language code'
     display:
       type: integer
       label: 'Display format'
