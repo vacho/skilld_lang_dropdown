@@ -16,6 +16,20 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class LanguageDropdownForm extends FormBase {
 
   /**
+   * The language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
+
+  /**
+   * The path matcher.
+   *
+   * @var \Drupal\Core\Path\PathMatcherInterface
+   */
+  protected $patchMatcher;
+
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {

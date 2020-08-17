@@ -17,6 +17,7 @@ use Drupal\Core\Url;
 use Drupal\skilld_lang_dropdown\Form\LanguageDropdownForm;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\user\Entity\Role;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface;
 
@@ -177,7 +178,7 @@ class LangDropDownSwitcher extends BlockBase implements ContainerFactoryPluginIn
     $form = parent::buildConfigurationForm($form, $form_state);
     $languages = $this->languageManager->getLanguages();
 
-    $roles = user_roles();
+    $roles = Role::loadMultiple();
 
     $form['widget'] = [
       '#type' => 'select',
