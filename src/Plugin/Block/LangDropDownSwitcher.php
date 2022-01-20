@@ -396,6 +396,12 @@ class LangDropDownSwitcher extends BlockBase implements ContainerFactoryPluginIn
             }
             break;
         }
+
+        if (!isset($link['url'])) {
+          $link['url'] = Url::fromUri('internal:' . \Drupal::request()->getRequestUri(), [
+            'language' => $this->languageManager->getLanguage($langcode),
+          ]);
+        }
       }
 
       switch ($this->configuration['widget']) {
